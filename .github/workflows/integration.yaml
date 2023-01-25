@@ -1,0 +1,20 @@
+name: integration-build
+on:
+  push:
+    branches: [ main ]
+
+env:
+  ENVIRONMENT: "integration"
+#  NOTIFICATION_HOOK: ${{ secrets.NOTIFICATION_HOOK }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Notify Slack|Teams|Discord
+        uses: <ADEQUATE_ACTION>
+        with:
+          github-token: ${{ github.token }}
+          webhook-uri: ${{ env.TEAMS_HOOK }}

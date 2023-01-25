@@ -1,0 +1,91 @@
+linters-settings:
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+  goimports:
+    local-prefixes: github.com/golangci/golangci-lint
+  govet:
+    check-shadowing: true
+  misspell:
+    locale: US
+  nakedret:
+    max-func-lines: 2
+  gofumpt:
+    extra-rules: true
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - durationcheck
+    - errcheck
+    - errchkjson
+    - exhaustive
+    - exportloopref
+    - funlen
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    #    - godox
+    - gofmt
+    - goimports
+    - gomnd
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - nestif
+    - prealloc
+    - staticcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+    - wsl
+    - asciicheck
+    - nolintlint
+    - gofumpt
+    - goheader
+    - noctx
+    - errorlint
+    - paralleltest
+    - tparallel
+    - forbidigo
+    - makezero
+    - predeclared
+    - thelper
+    - cyclop
+    - revive
+
+issues:
+  exclude-rules:
+    - path: examples/*
+      linters:
+        - gomnd
+        - gochecknoglobals
+    - path: _test\.go
+      linters:
+        - exhaustruct
+        - exhaustive
+        - lll
+    - path: internal/pkg/auth/*
+      linters:
+        - gocritic

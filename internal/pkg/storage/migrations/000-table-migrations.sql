@@ -1,0 +1,5 @@
+CREATE TABLE migrations
+(
+    id         SERIAL PRIMARY KEY,
+    applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

@@ -1,0 +1,65 @@
+version: "3.7"
+
+services:
+  api-db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=api_user
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=api_db
+    ports:
+      - '5434:5432'
+    volumes:
+      - api-db:/var/lib/postgresql/data
+    networks:
+      backend:
+        aliases:
+          - api-db
+  api:
+    build:
+      context: .
+      dockerfile: "build/ci/docker/api/Dockerfile"
+      args:
+        ENV_FILE: ./.env.dc
+    container_name: api
+    ports:
+      - "9450:9450"
+    environment:
+      API_PORT: "9450"
+      DATABASE_URL: "postgres://pg_user:postgres@api-db:5432/db?sslmode=disable"
+      REDIS_URL: "redis://redis:@redis-store:6379"
+      STAGE: "DEBUG"
+    env_file:
+      - .env
+    depends_on:
+      - api-db
+      - redis-store
+    links:
+      - api-db
+      - redis-store
+    networks:
+      backend:
+        aliases:
+          - api
+  redis-store:
+    image: redis:alpine
+    volumes:
+      - ./build/config/redis.conf:/redis.conf
+    command: [ "redis-server", "/redis.conf" ]
+    ports:
+      - "6377:6379"
+    networks:
+      backend:
+        aliases:
+          - redis-store
+networks:
+  backend:
+    name: "api-be-network"
+volumes:
+  api-db:
+    driver: local
+  first-tenant:
+    driver: local
+  second-tenant:
+    driver: local

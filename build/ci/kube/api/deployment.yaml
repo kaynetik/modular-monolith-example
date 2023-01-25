@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dec-api
+  labels:
+    app: dec-api
+spec:
+  selector:
+    matchLabels:
+      app: dec-api
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: dec-api
+      annotations:
+    spec:
+      serviceAccountName: dec-api-acc
+      volumes:
+        - name: private-key
+          secret:
+            secretName: dec-api-private-key
+            items:
+              - key: ec_pub.pem
+                path: ec_pub.pem
+              - key: ec_priv.pem
+                path: ec_priv.pem
+      containers:
+        - name: dec-api
+          image: ${TAG_ID}.dkr.ecr.us-west-1.amazonaws.com/decantera-dev/dec-api:${TAG}
+          imagePullPolicy: Always
+          ports:
+            - name: service
+              containerPort: 6000
+          envFrom:
+            - configMapRef:
+                name: dec-api
+            - secretRef:
+                name: dec-api
+          volumeMounts:
+            - name: private-key
+              mountPath: "/build/certs"
+              readOnly: true
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: dec-api
+spec:
+  selector:
+    app: dec-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9450
+      name: dec-api
+  type: ClusterIP
